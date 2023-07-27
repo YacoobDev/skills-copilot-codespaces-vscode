@@ -1,16 +1,49 @@
 //create a web server
-//create a web server
 import { Router } from 'express';
 const router = Router();
 
-//import the controller
-import { create, destroy } from '../controllers/comments_controller';
+//import the comments model
+import Comments, { find } from '../models/comments';
 
-//create a route for create
-router.post('/create',create);
+//GET request for all comments
+router.get('/', (req, res) => {
+    find()
+        .then((data) => {
+            console.log('Data: ', data);
+            res.json(data);
+        })
+        .catch((error) => {
+            console.log('error: ', error);
+        });
+});
 
-//create a route for delete
-router.get('/destroy/:id',destroy);
+//POST request to add a new comment
+router.post('/save', (req, res) => {
+    console.log('Body: ', req.body);
+    const data = req.body;
 
-//export the router
+    const newComments = new Comments(data);
+
+    //save the data
+    newComments.save((error) => {
+        if (error) {
+            res.status(500).json({ msg: 'Sorry, internal server error' });
+            return;
+        }
+        // Comments
+        return res.json({
+            msg: 'Your data has been saved!!!!!!',
+        });
+    });
+});
+
+//GET request for all comments
+router.get('/name', (req, res) => {
+    const data = {
+        username: 'peterson',
+        age: 5,
+    };
+    res.json(data);
+});
+
 export default router;
